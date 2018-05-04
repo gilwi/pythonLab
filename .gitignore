@@ -1,3 +1,6 @@
 **venv/
 Vagrantfile
 **.idea/
+**.vagrant/
+**__pycache__/
+output
