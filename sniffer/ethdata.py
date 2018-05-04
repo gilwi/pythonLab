@@ -1,28 +1,33 @@
-import struct
+
 
 class EthData:
-    # Frame Session counter
-    frameCount = 0
 
     def __init__(self, bytes):
+
         # Translate bytes sequence to slice-able string
         self.bytes = bytes
 
         # Retrieve ethernet encapsulation data
-        self.ethHeader = self.bytes[:14]
-        self.ethFooter = self.bytes[-4:]
+        self.eth_header = self.bytes[:14]
+        self.eth_fcs = self.bytes[-4:]
 
         # Retrieve indiviual group of bytes from ethernet header
-        self.macDst = self.ethHeader[:6]
-        self.macSrc = self.ethHeader[6:-2]
-        self.ethType = self.ethHeader[-2:]
+        self.mac_dst = fmt_macaddr(self.eth_header[:6].hex())
+        self.mac_src = fmt_macaddr(self.eth_header[6:-2].hex())
+        self.eth_type = self.eth_header[-2:].hex()
+
+
+def fmt_macaddr(mac_addr):
+    t = iter(mac_addr)
+    return ':'.join(a+b for a,b in zip(t, t))
+
 
 
 
 
 
 def main():
-    frame = ethData()
+    pass
 
 
 if __name__ == '__main__':

@@ -14,9 +14,9 @@ def main():
         message = s.recv(1024)
         frame = EthData(message)
         print(frame.bytes)
-        print(frame.macDst.hex())
-        print(frame.macSrc.hex())
-        print(frame.ethType.hex())
+        print(frame.mac_dst)
+        print(frame.mac_src)
+        print(frame.eth_type)
 
 
 
