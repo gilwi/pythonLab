@@ -1,25 +1,24 @@
-
-
 class EthData:
 
     def __init__(self, bytes):
 
-        # Translate bytes sequence to slice-able string
-        self.bytes = bytes
-
         # Retrieve ethernet encapsulation data
-        self.eth_header = self.bytes[:14]
-        self.eth_fcs = self.bytes[-4:]
+        self.__eth_header = bytes[:14]
+        # self.eth_fcs = self.bytes[-4:]
 
-        # Retrieve indiviual group of bytes from ethernet header
-        self.mac_dst = fmt_macaddr(self.eth_header[:6].hex())
-        self.mac_src = fmt_macaddr(self.eth_header[6:-2].hex())
-        self.eth_type = self.eth_header[-2:].hex()
+        # Retrieve formatted string corresponding to
+        # ethernet header information
+        self.mac_dst = fmt_macaddr(self.__eth_header[:6].hex())
+        self.mac_src = fmt_macaddr(self.__eth_header[6:-2].hex())
+        self.eth_type = self.__eth_header[-2:].hex()
 
 
 def fmt_macaddr(mac_addr):
+    # Retrieve hex form of mac address
     t = iter(mac_addr)
+    # Return Unix-like mac address in the form ff:ff:ff:ff:ff:ff
     return ':'.join(a+b for a,b in zip(t, t))
+
 
 
 
