@@ -10,10 +10,14 @@ class IpData:
 
         # Retrieve formatted string corresponding to
         # ip header information
-        self.info = self.__ip_header[:4]
+        self.info = bin(int(self.__ip_header.hex()[:4], 16))[2:]
+        # Get ip version number
+        self.version = int('0b'+self.info[:3], 2)
+
 
         self.frag_info = self.__ip_header[4:8]
         self.pkt_info = self.__ip_header[8:12]
+
         self.src_addr = socket.inet_ntoa(self.__ip_header[12:16])
         self.dst_addr = socket.inet_ntoa(self.__ip_header[16:20])
 
