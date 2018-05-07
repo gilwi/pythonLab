@@ -7,12 +7,15 @@ class IpData:
 
         # Retrieve ethernet encapsulation data
         self.__ip_header = bytes
+        self.ip_header = bytes
 
-        # Retrieve formatted string corresponding to
-        # ip header information
+        # Retrieve binary string corresponding to
+        # ip header first byte of information
+        # and strip '0b' extension for easier slicing
         self.info = bin(int(self.__ip_header.hex()[:4], 16))[2:]
         # Get ip version number
-        self.version = int('0b'+self.info[:3], 2)
+        self.version = int('0b' + self.info[:3], 2)
+        self.ihl = '0b' + self.info[3:7]
 
 
         self.frag_info = self.__ip_header[4:8]

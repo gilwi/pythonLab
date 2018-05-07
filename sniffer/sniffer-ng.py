@@ -17,7 +17,7 @@ def main():
     while True:
         message = s.recv(1024)
 
-        eth_layer = EthData(message[])
+        eth_layer = EthData(message)
         print()
         print("This is packet number :", frameCount)
         print(eth_layer.mac_dst)
@@ -28,12 +28,7 @@ def main():
         if eth_layer.eth_type == '0800':
             ip_layer = IpData(message[14:-4])
 
-            print(ip_layer.src_addr)
-            print(ip_layer.dst_addr)
-            print()
-            print(ip_layer.info)
-            print(ip_layer.version)
-            print(ip_layer.ihl)
+            print(ip_layer.ip_header[16:20])
 
 
         frameCount+=1

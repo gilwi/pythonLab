@@ -19,12 +19,6 @@ def fmt_macaddr(mac_addr):
     # Return Unix-like mac address in the form ff:ff:ff:ff:ff:ff
     return ':'.join(a+b for a,b in zip(t, t))
 
-
-
-
-
-
-
 def main():
     pass
 
