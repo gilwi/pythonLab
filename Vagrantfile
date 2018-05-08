@@ -10,6 +10,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.network "public_network", bridge: "en0: Wi-Fi (AirPort)", use_dhcp_assigned_default_route: true
   config.vm.synced_folder "./sniffer", "/sniffer"
+  config.vm.synced_folder "./tests", "/tests"
 
   config.vm.provider "virtualbox" do |vb|
     # Display the VirtualBox GUI when booting the machine

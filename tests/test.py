@@ -1,3 +1,26 @@
-from struct import unpack
-net = unpack('BBBB' ,b'\n\x00\x00\xff')
-print(str(net[0])+'.'+str(net[1])+'.'+str(net[2])+'.'+str(net[3]))
+#!/usr/bin/python3
+
+import socket
+
+def main():
+    s = socket.socket(
+        socket.AF_PACKET,
+        socket.SOCK_RAW,
+        socket.htons(3)
+    )
+    frameCount=0
+
+    s.bind(('eth0', 3))
+
+    while True:
+        message = s.recv(256)
+
+        print("This is packet number :", frameCount)
+        print(message)
+
+        frameCount+=1
+        if frameCount > 1000:
+            exit()
+
+if __name__ == '__main__':
+    main()

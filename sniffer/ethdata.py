@@ -3,7 +3,7 @@ class EthData:
     def __init__(self, bytes):
 
         # Retrieve ethernet encapsulation data
-        self.__eth_header = bytes[:14]
+        self.__eth_header = bytes
         # self.eth_fcs = self.bytes[-4:]
 
         # Retrieve formatted string corresponding to

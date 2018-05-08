@@ -4,6 +4,8 @@ import socket
 from ethdata import EthData
 from ipdata import IpData
 
+
+
 def main():
     s = socket.socket(
         socket.AF_PACKET,
@@ -17,7 +19,7 @@ def main():
     while True:
         message = s.recv(1024)
 
-        eth_layer = EthData(message[])
+        eth_layer = EthData(message[:14])
         print()
         print("This is packet number :", frameCount)
         print(eth_layer.mac_dst)
