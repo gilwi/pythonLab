@@ -63,7 +63,7 @@ class IPData:
             self.traff_class = self.__info[3:11]
             self.flow_lbl = self.__info[11:]
 
-            self.payload_len = self.__frag_info[:2]
+            self.payload_len = int(self.__frag_info[:2].hex(), 16)
             self.next_header = self.__frag_info[2:3]
             self.hop_limit = self.__frag_info[3:]
 
@@ -166,7 +166,7 @@ def main():
         print("Frame number: {}".format(frameCount))
         print(repr(eth_header))
 
-        if eth_header.eth_type in ['0800']:
+        if eth_header.eth_type in ['0800','86dd']:
             ip_req = IPData(eth_payload)
             print()
             print(repr(ip_req))
