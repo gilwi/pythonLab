@@ -166,21 +166,14 @@ def main():
         print()
         print('-'*100)
         print("Frame number: {}".format(frameCount))
+        print(repr(eth_header))
 
-        if eth_header.eth_type == '0800':
+        if eth_header.eth_type in ['0800']:
             ip_req = IPData(eth_payload)
-            pass
-            print(repr(eth_header))
             print()
             print(repr(ip_req))
         elif eth_header.eth_type == '0806':
             arp_req = ArpData(eth_payload[:])
-            pass
-            print(repr(eth_header))
-            print()
-            print(repr(arp_req))
-        else:
-            print(repr(eth_header))
             print()
             print(repr(arp_req))
 
