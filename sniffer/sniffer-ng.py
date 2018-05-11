@@ -155,7 +155,7 @@ def main():
     )
     frameCount=0
 
-    s.bind(('enp0s3', 3))
+    s.bind(('eth0', 3))
 
     while True:
         message = s.recv(1024)
@@ -169,11 +169,13 @@ def main():
 
         if eth_header.eth_type == '0800':
             ip_req = IPData(eth_payload)
+            pass
             print(repr(eth_header))
             print()
             print(repr(ip_req))
         elif eth_header.eth_type == '0806':
             arp_req = ArpData(eth_payload[:])
+            pass
             print(repr(eth_header))
             print()
             print(repr(arp_req))
