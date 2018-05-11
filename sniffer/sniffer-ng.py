@@ -64,8 +64,8 @@ class IPData:
             self.flow_lbl = self.__info[11:]
 
             self.payload_len = int(self.__frag_info[:2].hex(), 16)
-            self.next_header = self.__frag_info[2:3]
-            self.hop_limit = self.__frag_info[3:]
+            self.next_header = int(self.__frag_info[2:3], 16)
+            self.hop_limit = int(self.__frag_info[3:], 16)
 
             self.src_ip = fmt_ip6addr(self.__ip_header[8:24].hex())
             self.dst_ip = fmt_ip6addr(self.__ip_header[24:40].hex())
