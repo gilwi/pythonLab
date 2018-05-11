@@ -8,6 +8,8 @@ Vagrant.configure("2") do |config|
   # config.vm.network "private_network", ip: "192.168.33.10"
   # config.vm.network "public_network"
 
+  config.vm.network "private_network", ip: "fde4:8dba:82e1::c4"
+
   config.vm.network "public_network", bridge: "en0: Wi-Fi (AirPort)", use_dhcp_assigned_default_route: true
   config.vm.synced_folder "./sniffer", "/sniffer"
   config.vm.synced_folder "./tests", "/tests"
@@ -20,7 +22,9 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provision "shell", inline: <<-SHELL
+
     echo "alias python='python3'" >> /root/.bashrc
+    echo "sudo su" >> /home/vagrant/.bashrc
     echo "cd /sniffer" >> /root/.bashrc
     apt-get update
     # DEBIAN_FRONTEND=noninteractive apt-get upgrade -y

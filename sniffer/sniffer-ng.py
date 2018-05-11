@@ -29,21 +29,25 @@ class IPData:
         # Retrieve ethernet encapsulation data
         self.__ip_header = bytes
 
-        self.__info = bin(int(self.__ip_header.hex()[:4], 16))[2:]
+
+        self.__info = bin(int(self.__ip_header.hex()[:3], 16))[2:]
+        self.__frag_info = self.__ip_header[4:8]
+
         self.version = int('0b' + self.__info[:3], 2)
+        print('0b' + self.__info[:4])
         if self.version == 4:
-            self.ihl = int('0b0' + self.__info[3:7], 2)
+
+            self.ihl = int('0b' + self.__info[3:7], 2)
             self.tos_dcsp = self.__info[7:11]
             self.tos_ecn = self.__info[11:13]
 
-
-            self.congest = int('0b' + self.__info[13:15], 2)
-            self.len =  self.__info[15:]
+            self.congest = int('0b' + self.__info[13:15].zfill(4), 2)
+            self.len = self.__info[15:]
 
             self.__frag_info = bin(int(self.__ip_header.hex()[4:8], 16))[2:]
             self.frag_id = int('0b' + self.__frag_info[:15], 2)
-            self.flags = int('0b0' + self.__frag_info[15:18], 2)
-            self.frag_offset = int('0b0' + self.__frag_info[18:], 2)
+            self.flags = int('0b' + self.__frag_info[15:18].zfill(4), 2)
+            self.frag_offset = int('0b' + self.__frag_info[18:].zfill(32), 2)
 
             self.__pkt_info = self.__ip_header[8:12]
             self.ttl = int(self.__pkt_info[:1].hex(), 16)
@@ -55,31 +59,46 @@ class IPData:
 
             self.options = None
             if self.ihl > 5:
-                self.options = self.__ip_header[20:20+self.ihl-5]
-
-
+                self.options = self.__ip_header[20:15+self.ihl]
         elif self.version == 6:
-            pass
+            self.traff_class = self.__info[3:11]
+            self.flow_lbl = self.__info[11:]
+
+            self.payload_len = self.__frag_info[:2]
+            self.next_header = self.__frag_info[2:3]
+            self.hop_limit = self.__frag_info[3:4]
+
+            self.src_ip = fmt_ip6addr(self.__ip_header[8:24].hex())
+            self.dst_ip = fmt_ip6addr(self.__ip_header[24:40].hex())
 
     def __repr__(self):
-        return "VERSION: {}\nINTERNET HDR LENGTH: {}\nTOS: {} {}\n" \
-               "CONGESTION: {}\nLEN: {}\nFRAG_ID: {}\nFLAGS: {}\n" \
-               "FRAG_OFFSET: {}\nTTL: {}\nPROTO: {}\nHDR_CKSUM: {}" \
-               "\nSRC_IP: {}\nDST_IP: {}\nOPTIONS: {}\n".format(self.version,
-                                                               self.ihl,
-                                                               self.tos_dcsp,
-                                                               self.tos_dcsp,
-                                                               self.congest,
-                                                               self.len,
-                                                               self.frag_id,
-                                                               self.flags,
-                                                               self.frag_offset,
-                                                               self.ttl,
-                                                               self.proto,
-                                                               self.hdr_cksum,
-                                                               self.src_ip,
-                                                               self.dst_ip,
-                                                               self.options)
+        if self.version == 4:
+            return "VERSION: {}\nINTERNET HDR LENGTH: {}\nTOS: {} {}\n" \
+                   "CONGESTION: {}\nLEN: {}\nFRAG_ID: {}\nFLAGS: {}\n" \
+                   "FRAG_OFFSET: {}\nTTL: {}\nPROTO: {}\nHDR_CKSUM: {}" \
+                   "\nSRC_IP: {}\nDST_IP: {}\nOPTIONS: {}\n".format(self.version,
+                                                                   self.ihl,
+                                                                   self.tos_dcsp,
+                                                                   self.tos_dcsp,
+                                                                   self.congest,
+                                                                   self.len,
+                                                                   self.frag_id,
+                                                                   self.flags,
+                                                                   self.frag_offset,
+                                                                   self.ttl,
+                                                                   self.proto,
+                                                                   self.hdr_cksum,
+                                                                   self.src_ip,
+                                                                   self.dst_ip,
+                                                                   self.options)
+        if self.version == 6:
+            return "VERSION: {}\nTRAFFIC_CLASS: {}\nNEXT_HEADER: {}\n" \
+                   "HOP_LIMIT: {}\nSRC_IP: {}\nDST_IP: {}\n".format(self.version,
+                                                                    self.traff_class,
+                                                                    self.next_header,
+                                                                    self.hop_limit,
+                                                                    self.src_ip,
+                                                                    self.dst_ip)
 
 class ArpData:
 
@@ -116,10 +135,15 @@ class ArpData:
                                                                                      self.dst_hw_addr,
                                                                                      self.dst_proto_addr)
 
-
 def fmt_macaddr(mac_addr):
     # Retrieve hex form of mac address
     t = iter(mac_addr)
+    # Return Unix-like mac address in the form ff:ff:ff:ff:ff:ff
+    return ':'.join(a+b for a,b in zip(t, t))
+
+def fmt_ip6addr(ip6_addr):
+    # Retrieve hex form of mac address
+    t = iter(ip6_addr)
     # Return Unix-like mac address in the form ff:ff:ff:ff:ff:ff
     return ':'.join(a+b for a,b in zip(t, t))
 
@@ -131,7 +155,7 @@ def main():
     )
     frameCount=0
 
-    s.bind(('eth1', 3))
+    s.bind(('eth0', 3))
 
     while True:
         message = s.recv(1024)
@@ -154,7 +178,9 @@ def main():
             print()
             print(repr(arp_req))
         else:
-            pass
+            print(repr(eth_header))
+            print()
+            print(repr(arp_req))
 
         frameCount+=1
 
