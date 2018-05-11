@@ -34,7 +34,6 @@ class IPData:
         self.__frag_info = self.__ip_header[4:8]
 
         self.version = int('0b' + self.__info[:3], 2)
-        print('0b' + self.__info[:4])
         if self.version == 4:
 
             self.ihl = int('0b' + self.__info[3:7], 2)
@@ -66,7 +65,7 @@ class IPData:
 
             self.payload_len = self.__frag_info[:2]
             self.next_header = self.__frag_info[2:3]
-            self.hop_limit = self.__frag_info[3:4]
+            self.hop_limit = self.__frag_info[3:]
 
             self.src_ip = fmt_ip6addr(self.__ip_header[8:24].hex())
             self.dst_ip = fmt_ip6addr(self.__ip_header[24:40].hex())
@@ -92,9 +91,10 @@ class IPData:
                                                                    self.dst_ip,
                                                                    self.options)
         if self.version == 6:
-            return "VERSION: {}\nTRAFFIC_CLASS: {}\nNEXT_HEADER: {}\n" \
+            return "VERSION: {}\nTRAFFIC_CLASS: {}\nPAYLOAD_LEN: {}\nNEXT_HEADER: {}\n" \
                    "HOP_LIMIT: {}\nSRC_IP: {}\nDST_IP: {}\n".format(self.version,
                                                                     self.traff_class,
+                                                                    self.payload_len,
                                                                     self.next_header,
                                                                     self.hop_limit,
                                                                     self.src_ip,
@@ -120,8 +120,6 @@ class ArpData:
         self.dst_proto_addr = self.__arp_hdr[8+2*self.hw_addr_len+self.proto_addr_len:8+2*self.hw_addr_len+2*self.proto_addr_len].hex()
         if len(self.dst_proto_addr) != 0:
             self.dst_proto_addr = '.'.join(map(str, unpack('BBBB', self.__arp_hdr[8+2*self.hw_addr_len+self.proto_addr_len:8+2*self.hw_addr_len+2*self.proto_addr_len])))
-        else:
-            pass
 
     def __repr__(self):
         return "HW_TYPE: {}\nPROTO_TYPE: {}\nHW_ADDR_LEN: {}\nPROTO_ADDR_LEN: {}\nOPE: {}\nSRC_HW_ADDR:" \
@@ -155,7 +153,7 @@ def main():
     )
     frameCount=0
 
-    s.bind(('eth0', 3))
+    s.bind(('enp0s8', 3))
 
     while True:
         message = s.recv(1024)
