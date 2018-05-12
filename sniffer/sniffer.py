@@ -4,10 +4,8 @@ import socket
 from struct import unpack
 
 class L2Data:
-
     def __init__(self, bytes):
-
-        # Retrieve ethernet encapsulation data
+        # Retrieve ethernet header data for easier slicing
         self.__eth_header = bytes
         # self.eth_fcs = self.bytes[-4:]
 
@@ -134,16 +132,16 @@ class ArpData:
                                                                                      self.dst_proto_addr)
 
 def fmt_macaddr(mac_addr):
-    # Retrieve hex form of mac address
+    # Retrieve str hex form of received bytes
     t = iter(mac_addr)
     # Return Unix-like mac address in the form ff:ff:ff:ff:ff:ff
     return ':'.join(a+b for a,b in zip(t, t))
 
 def fmt_ip6addr(ip6_addr):
-    # Retrieve hex form of mac address
+    # Retrieve hex form of mac address into iter
     t = iter(ip6_addr)
-    # Return Unix-like mac address in the form ff:ff:ff:ff:ff:ff
-    return ':'.join(a+b for a,b in zip(t, t))
+    # Return ipv6 str formatted like ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff
+    return ':'.join(a+b+c+d if a+b+c+d != '0000' else '' for a,b,c,d in zip(t, t, t, t))
 
 def main():
     s = socket.socket(
