@@ -151,7 +151,7 @@ def main():
     )
     frameCount=0
 
-    s.bind(('eth2', 3))
+    s.bind(('eth1', 3))
 
     while True:
         message = s.recv(1024)
