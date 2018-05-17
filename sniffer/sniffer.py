@@ -161,7 +161,7 @@ def main():
 
         print()
         print('-'*100)
-        print("Frame number: {}".format(frameCount))
+        print("Frame id: {}".format(frameCount))
         print(repr(eth_header))
 
         if eth_header.eth_type in ['0800','86dd']:
